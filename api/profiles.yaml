@@ -35,6 +35,9 @@ commands:
     description: Create profile
     method: POST
     path: service/oee-bundle/configurationmanager/2/configuration
+    exampleList:
+      - description: Create a new OEE profile by using profile.jsonnet template in templates directory
+        command: c8y oee profiles create --template oee::profile.jsonnet
     body:
       - name: type
         type: string
