@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+help() {
+  cat <<EOF
+Install Apamma license via c8y tenant option
+EOF
+}
+
+# Read variables from JSON file
+LICENSE_UNESCAPED=$(jq -r '.LICENSE_UNESCAPED' config.json)
+
+LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
+c8y tenantoptions update --category apama --key credentials.license --debug -n --value "$LICENSE_ESCAPED"
