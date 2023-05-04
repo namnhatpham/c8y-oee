@@ -1,12 +1,46 @@
 #!/usr/bin/env bash
 help() {
   cat <<EOF
+Usage: $(basename "$0") [--license <license-key>]
+Ex: c8y oee \install_license --license AbcD4E567
 Install Apamma license via c8y tenant option
 EOF
 }
 
-# Read variables from JSON file
-LICENSE_UNESCAPED=$(jq -r '.LICENSE_UNESCAPED' config.json)
+# Parse command-line options
+REST_ARGS=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      help
+      exit 0
+      ;;
+    -l|-license|--license)
+      if [ $# -gt 1 ]; then
+        LICENSE_UNESCAPED=$2
+        shift
+      else
+        echo "Option $1 requires an argument." >&2
+        exit 1
+      fi
+      ;;
+    *)
+      REST_ARGS+=("$1")
+      ;;
+  esac
+  shift
+done
+set -- "${REST_ARGS[@]}"
+
+echo "URL       :  $C8Y_HOST"
+echo "Tenant ID :  $C8Y_TENANT"
+echo "User      :  $C8Y_USER"
+echo "License key: $LICENSE_UNESCAPED"
+
+if [ -z "${LICENSE_UNESCAPED+x}" ]; then
+  echo "License variable not set. Use -l or --license to set the license." >&2
+  exit 1
+fi
 
 LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 c8y tenantoptions update --category apama --key credentials.license --debug -n --value "$LICENSE_ESCAPED"
