@@ -1,5 +1,5 @@
 {
-  "name": "Simulator Hi Frequency Availability - 1",
+  "name": "Simulator Testing Script - 1",
   "amountUnit": "",
   "locationId": "Matrix",
   "subscriptions": [
