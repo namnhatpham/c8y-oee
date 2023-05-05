@@ -69,3 +69,7 @@ fi
 
 LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
+if [[ $response == *"serverError"* ]]; then
+  echo "Error: Failed to add apama license to tenant option." >&2
+  exit 1
+fi
