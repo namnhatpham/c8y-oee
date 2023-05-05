@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 help() {
   cat <<EOF
-Usage: $(basename "$0") [--license <license-key>]
-Ex: c8y oee \install_license --license AbcD4E567
-Install Apamma license via c8y tenant option
+Usage: c8y oee \\$(basename "$0") --license <license-key>
+Arguments:
+  -l, --license  LICENSE_KEY  The license key (required)
+
+Example usage: c8y oee \install_license --license AbcD4E567
+=> Install Apamma license via c8y tenant option
 EOF
 }
 
@@ -30,6 +33,22 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+
+# Check that the required arguments are present
+missing_args=()
+if [[ -z $license ]]; then
+  missing_args+=(license)
+fi
+
+if [[ ${#missing_args[@]} -gt 0 ]]; then
+  message="Error: Missing required arguments: ${missing_args[0]}"
+  for (( i=1; i<${#missing_args[@]}; i++ )); do
+    message+=", ${missing_args[$i]}"
+  done
+  echo "$message"
+  exit 1
+fi
+
 set -- "${REST_ARGS[@]}"
 
 echo "URL       :  $C8Y_HOST"
@@ -43,4 +62,4 @@ if [ -z "${LICENSE_UNESCAPED+x}" ]; then
 fi
 
 LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
-c8y tenantoptions update --category apama --key credentials.license --debug -n --value "$LICENSE_ESCAPED"
+c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED"
