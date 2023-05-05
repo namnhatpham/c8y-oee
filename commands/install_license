@@ -68,4 +68,4 @@ if [ -z "${LICENSE_UNESCAPED+x}" ]; then
 fi
 
 LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
-c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED"
+response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
