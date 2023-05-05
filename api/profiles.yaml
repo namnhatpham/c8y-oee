@@ -38,6 +38,8 @@ commands:
     exampleList:
       - description: Create a new OEE profile by using profile.jsonnet template in templates directory
         command: c8y oee profiles create --template oee::profile.jsonnet
+      - description: Create a new OEE profile by using profile.jsonnet template in templates directory
+        command: c8y oee profiles create --template oee::profile.jsonnet
     body:
       - name: type
         type: string
@@ -46,6 +48,20 @@ commands:
         validationSet:
           - "MACHINE"
           - "LINE"
+          
+      - name: name
+        type: string
+        description: Name of profile
+        default: Test OEE Profile
+
+      - name: status
+        type: string
+        description: Status of the Profile
+        default: ACTIVE
+        validationSet:
+          - "INACTIVE"
+          - "ACTIVE"
+          - "INCOMPLETE"
 
   - name: update
     description: Update profile
