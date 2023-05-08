@@ -1,7 +1,5 @@
 {
-  "name": "Simulator Testing Script - 1",
   "amountUnit": "",
-  "locationId": "Matrix",
   "subscriptions": [
     {
       "type": "event",
