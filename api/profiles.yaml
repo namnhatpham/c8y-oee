@@ -41,6 +41,16 @@ commands:
     bodyRequiredKeys:
       - "deviceId"
       - "name"
+    bodyTemplates:
+      - type: jsonnet
+        template: |
+          {"ui": {
+              "shortStoppages": "Not Tracked",
+              "correlationSectionVisited": true,
+              "computation": "PPQ",
+              "shortStoppagesAmount": null
+            }
+          }
     body:
       - name: type
         type: string
@@ -57,6 +67,10 @@ commands:
       - name: name
         type: string
         description: Name of profile
+
+      - name: tenantId
+        type: string
+        description: tenant ID
 
       - name: locationId
         type: string

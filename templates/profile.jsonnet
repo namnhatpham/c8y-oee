@@ -1,4 +1,6 @@
 {
+  "name": "Testing profile",
+  "locationId":"",
   "amountUnit": "",
   "subscriptions": [
     {
