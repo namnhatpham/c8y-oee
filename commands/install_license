@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
 help() {
   cat <<EOF
-Usage: c8y oee \\$(basename "$0") --license <license-key>
+Usage: c8y oee \\$(basename "$0") [--license <license-key>]
 Arguments:
-  -l, --license  LICENSE_KEY  The license key (required)
+  -l, --license  LICENSE_KEY  The license key (required if license key is not provided in license.json)
 
-Example usage: c8y oee \install_license --license AbcD4E567
-=> Install Apamma license via c8y tenant option
+Example usage:
+c8y oee \install_license --license AbcD4E567
+=> Install Apamma license via c8y tenant option by input license key in command line
+
+c8y oee \install_license
+=> Install Apamma license via c8y tenant option by input license key into license.json file
+In license.json, the license key should be input like this
+{
+  "LICENSE_UNESCAPED": "AbcD4E567"
+}
 EOF
 }
 
