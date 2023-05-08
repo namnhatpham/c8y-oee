@@ -53,8 +53,11 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
   # Check script current directory and move to it
   script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
   cd "$script_dir"
-  LICENSE_UNESCAPED=$(sed -n 's/.*"\(.*\)".*/\1/p' license.json)
-  if [[ -z $LICENSE_UNESCAPED || $LICENSE_UNESCAPED == "<your license key>" || "$LICENSE_UNESCAPED" =~ ^[[:space:]]*$ ]]; then
+  license_file_name=$(ls *.xml)
+  LICENSE_UNESCAPED=$(cat $license_file_name)
+  LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
+
+  if [[ -z $LICENSE_UNESCAPED ]]; then
     missing_args+=(license)
   fi
 fi
@@ -75,9 +78,7 @@ set -- "${REST_ARGS[@]}"
 echo "URL       :  $C8Y_HOST"
 echo "Tenant ID :  $C8Y_TENANT"
 echo "User      :  $C8Y_USER"
-echo "License key: $LICENSE_UNESCAPED"
 
-LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
 if [[ $response == *"serverError"* ]]; then
   echo "$response"
