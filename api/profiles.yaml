@@ -36,14 +36,12 @@ commands:
     method: POST
     path: service/oee-bundle/configurationmanager/2/configuration
     exampleList:
-      - description: Basic command to create a new OEE profile named "testing" for device with ID 12345
-        command: c8y oee profiles create --deviceId 12345 --name testing
+      - description: Syntax to create OEE profile
+        command: c8y oee profiles create --deviceId [device-id] --name [oee-profile-name]
 
       - description: Create a new OEE profile named "testing" for device with ID 12345 by using profile.jsonnet template in templates directory and make change to some fields
         command: c8y oee profiles create --template oee::profile.jsonnet --deviceId 12345 --name testing --type MACHINE --status INACTIVE
-    bodyRequiredKeys:
-      - "deviceId"
-      - "name"
+
     body:
       - name: type
         type: string
@@ -55,11 +53,13 @@ commands:
       
       - name: deviceId
         type: string
-        description: ID of parent device
+        description: ID of device used for OEE calculation ----------> (**REQUIRED**)
+        required: true
           
       - name: name
         type: string
-        description: Name of profile
+        description: Name of oee profile ----------> (**REQUIRED**)
+        required: true
 
       - name: tenantId
         type: string
