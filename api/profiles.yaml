@@ -36,8 +36,11 @@ commands:
     method: POST
     path: service/oee-bundle/configurationmanager/2/configuration
     exampleList:
-      - description: Create a new OEE profile by using profile.jsonnet template in templates directory and make change to some fields
-        command: c8y oee profiles create --template oee::profile.jsonnet --name testing --type MACHINE --status INACTIVE
+      - description: Create a new OEE profile named "testing" for device with ID 12345 by using profile.jsonnet template in templates directory and make change to some fields
+        command: c8y oee profiles create --template oee::profile.jsonnet --deviceId 12345 --name testing --type MACHINE --status INACTIVE
+    bodyRequiredKeys:
+      - "deviceId"
+      - "name"
     body:
       - name: type
         type: string
@@ -46,16 +49,24 @@ commands:
         validationSet:
           - "MACHINE"
           - "LINE"
+      
+      - name: deviceId
+        type: string
+        description: ID of parent device
           
       - name: name
         type: string
         description: Name of profile
-        default: Test OEE Profile
+
+      - name: locationId
+        type: string
+        description: Name of shiftplan
+        default: " "
 
       - name: status
         type: string
         description: Status of the Profile
-        default: ACTIVE
+        default: INCOMPLETE
         validationSet:
           - "INACTIVE"
           - "ACTIVE"
