@@ -20,6 +20,14 @@ HELP MESSAGE:
 EOF
 }
 
+error_check() {
+  if [ $? -ne 0 ]; then
+    echo "Error: process failed"
+    exit 1
+  fi
+}
+
+
 # Parse command-line options
 REST_ARGS=()
 while [ $# -gt 0 ]; do
@@ -37,6 +45,15 @@ while [ $# -gt 0 ]; do
         exit 1
       fi
       ;;
+    -f|-filePath|--filePath)
+      if [ $# -gt 1 ]; then
+        FILEPATH=$2
+        shift
+      else
+        echo "Option $1 requires an argument." >&2
+        exit 1
+      fi
+      ;;
     *)
       REST_ARGS+=("$1")
       ;;
@@ -44,20 +61,57 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-# Check that the required arguments are present
+# Check if license string was input in command line
 missing_args=()
 if [[ -z $LICENSE_UNESCAPED ]]; then
-  # Check script current directory and move to it
-  script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
-  cd "$script_dir"
-  # Read license xml file name and unescape the content inside
-  license_file_name=$(ls *.xml)
-  LICENSE_UNESCAPED=$(cat $license_file_name)
-  LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
+  # input filepath is . or ./example.xml
+  if [[ $FILEPATH == "."* ]]; then
+    # Check script current directory and move to license directory inside it.
+    script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
+    cd "$script_dir\license"
+    error_check
 
-  if [[ -z $LICENSE_UNESCAPED ]]; then
-    missing_args+=(license)
+    # input file path is ./example.xml
+    if [[ $FILEPATH == "./"* ]]; then
+      # Extract filename after "./"
+      license_file_name=${FILEPATH#./}
+
+    # input file path is .
+    else
+      # List all files in directory and prompt user to choose one
+      files=($(ls))
+      echo "Please choose a file to read:"
+      select file in "${files[@]}"; do
+        if [[ -n $file ]]; then
+          FILEPATH="$script_dir/$file"
+          break
+        fi
+      done
+      # Extract filename from full path
+      license_file_name=$(basename "$FILEPATH")
+    fi
+
+  else
+    # Extract filename from full path
+    license_file_name=$(basename "$FILEPATH")
+    # Extract directory path from full path
+    FILEPATH_WITHOUT_FILENAME=$(dirname "$FILEPATH")
+    # Change to directory containing license file
+    cd "$FILEPATH_WITHOUT_FILENAME"
+    error_check
+
   fi
+
+  # Read license xml file
+  LICENSE_UNESCAPED=$(cat "$license_file_name" 2>/dev/null)
+  error_check
+
+fi
+
+# Remove new line and return characters from license content
+LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
+if [[ -z $LICENSE_ESCAPED ]]; then
+  missing_args+=(license)
 fi
 
 # If no license string exists by input or in file, show error message
@@ -74,9 +128,10 @@ fi
 
 set -- "${REST_ARGS[@]}"
 
-echo "URL       :  $C8Y_HOST"
-echo "Tenant ID :  $C8Y_TENANT"
-echo "User      :  $C8Y_USER"
+echo "URL          :  $C8Y_HOST"
+echo "Tenant ID    :  $C8Y_TENANT"
+echo "User         :  $C8Y_USER"
+echo "License file :  $license_file_name"
 
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
 if [[ $response == *"serverError"* ]]; then
