@@ -13,7 +13,7 @@ HELP MESSAGE:
         c8y oee \install_license --license ABCxyz-key-welcome-to-OEE
 
     Install Apama license via c8y tenant option by reading xml license file:
-        c8y oee \install_license
+        c8y oee \install_license --filePath C:\SoftwareAG\Workspace\Download\InternalKeys_IBO_Suite-v10.11_exp-2023-10-31\Apama\Apama for Cumulocity IoT v10.4
     **Note** Only 1 xml license file should be available in the commands directory (same directory with the install_license script)
 
 ----------------------------------------------------------------------------------------------------------
@@ -64,6 +64,11 @@ done
 # Check if license string was input in command line
 missing_args=()
 if [[ -z $LICENSE_UNESCAPED ]]; then
+  if [[ -z $FILEPATH ]]; then
+    # Add filePath argument to missing message
+    missing_args+=(filePath)
+    return
+  fi
   # input filepath is . or ./example.xml
   if [[ $FILEPATH == "."* ]]; then
     # Check script current directory and move to license directory inside it.
@@ -108,25 +113,27 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
 
 fi
 
-# Remove new line and return characters from license content
-LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
-if [[ -z $LICENSE_ESCAPED ]]; then
+# Add license argument to missing message
+if [[ -z $LICENSE_UNESCAPED ]]; then
   missing_args+=(license)
 fi
 
 # If no license string exists by input or in file, show error message
 if [[ ${#missing_args[@]} -gt 0 ]]; then
-  message="Error: Missing required arguments: ${missing_args[0]}"
+  message="Error: Missing one of required arguments: ${missing_args[0]}"
   for (( i=1; i<${#missing_args[@]}; i++ )); do
     message+=", ${missing_args[$i]}"
   done
   echo "$message" >&2
-  echo "License variable not set. Use -l|--license to set the license key or input it in license.json." >&2
+  echo "License variable not set. Use -l|--license to set the license or --filePath to point to the license xml file." >&2
   help
   exit 1
 fi
 
 set -- "${REST_ARGS[@]}"
+
+# Remove new line and return characters from license content
+LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 
 echo "URL          :  $C8Y_HOST"
 echo "Tenant ID    :  $C8Y_TENANT"
