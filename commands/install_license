@@ -6,19 +6,16 @@ HELP MESSAGE:
 
     Usage: c8y oee \\$(basename "$0") [--license <license-key>]
     Arguments:
-      -l, --license  LICENSE_KEY  The license key (required if license key is not provided in license.json)
+      -l, --license  LICENSE_KEY  The license key (required if license file is not available in the commands directory)
 
     Example usage:
-    Install Apamma license via c8y tenant option by input license key in command line
+    Install Apama license via c8y tenant option by input license key in command line
         c8y oee \install_license --license AbcD4E567
 
-    Install Apamma license via c8y tenant option by input license key into license.json file:
+    Install Apama license via c8y tenant option by reading xml license file:
         c8y oee \install_license
+    **Note** Only 1 xml license file should be available in the commands directory (same directory with the install_license script)
 
-    -> In license.json, the license key should be input like this
-    {
-      "LICENSE_KEY": "AbcD4E567"
-    }
 ----------------------------------------------------------------------------------------------------------
 EOF
 }
@@ -53,6 +50,7 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
   # Check script current directory and move to it
   script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)
   cd "$script_dir"
+  # Read license xml file name and unescape the content inside
   license_file_name=$(ls *.xml)
   LICENSE_UNESCAPED=$(cat $license_file_name)
   LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
@@ -62,6 +60,7 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
   fi
 fi
 
+# If no license string exists by input or in file, show error message
 if [[ ${#missing_args[@]} -gt 0 ]]; then
   message="Error: Missing required arguments: ${missing_args[0]}"
   for (( i=1; i<${#missing_args[@]}; i++ )); do
@@ -85,3 +84,5 @@ if [[ $response == *"serverError"* ]]; then
   echo "Error: Failed to add apama license to tenant option." >&2
   exit 1
 fi
+
+echo "License is installed successfully"
