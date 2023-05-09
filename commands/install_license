@@ -4,13 +4,13 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee \\$(basename "$0") [--license <license-key>]
+    Usage: c8y oee \\$(basename "$0") [--license <license-string>]
     Arguments:
-      -l, --license  LICENSE_KEY  The license key (required if license file is not available in the commands directory)
+      -l, --license  LICENSE_String  The license string (required if license file is not available in the commands directory)
 
     Example usage:
     Install Apama license via c8y tenant option by input license key in command line
-        c8y oee \install_license --license AbcD4E567
+        c8y oee \install_license --license ABCxyz-key-welcome-to-OEE
 
     Install Apama license via c8y tenant option by reading xml license file:
         c8y oee \install_license
