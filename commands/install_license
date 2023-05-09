@@ -79,7 +79,8 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
     # input file path is ./example.xml
     if [[ $FILEPATH == "./"* ]]; then
       # Extract filename after "./"
-      license_file_name=${FILEPATH#./}
+      license_filename=${FILEPATH#./}
+      license_filepath="$script_dir/license/$license_filename"
 
     # input file path is .
     else
@@ -88,27 +89,27 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
       echo "Please choose a file to read:"
       select file in "${files[@]}"; do
         if [[ -n $file ]]; then
-          FILEPATH="$script_dir/$file"
+          license_filepath="$script_dir/license/$file"
           break
         fi
       done
-      # Extract filename from full path
-      license_file_name=$(basename "$FILEPATH")
+      license_filename=$file
     fi
 
   else
+    license_filepath=$FILEPATH
     # Extract filename from full path
-    license_file_name=$(basename "$FILEPATH")
+    license_filename=$(basename "$license_filepath")
     # Extract directory path from full path
-    FILEPATH_WITHOUT_FILENAME=$(dirname "$FILEPATH")
+    filepath_without_filename=$(dirname "$licensefilepath")
     # Change to directory containing license file
-    cd "$FILEPATH_WITHOUT_FILENAME"
+    cd "$filepath_without_filename"
     error_check
 
   fi
 
   # Read license xml file
-  LICENSE_UNESCAPED=$(cat "$license_file_name" 2>/dev/null)
+  LICENSE_UNESCAPED=$(cat "$license_filename" 2>/dev/null)
   error_check
 
 fi
@@ -138,7 +139,7 @@ LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 echo "URL          :  $C8Y_HOST"
 echo "Tenant ID    :  $C8Y_TENANT"
 echo "User         :  $C8Y_USER"
-echo "License file :  $license_file_name"
+echo "License file :  $license_filepath"
 
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
 if [[ $response == *"serverError"* ]]; then
