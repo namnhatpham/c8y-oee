@@ -4,17 +4,25 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee \\$(basename "$0") [--license <license-string>]
+    Usage: c8y oee \\$(basename "$0") [--license <license-string>] [--filePath <path-to-license-file>]
     Arguments:
-      -l, --license  LICENSE_String  The license string (required if license file is not available in the commands directory)
+      -l, --license   license-string        The license string
+      -f, --filePath  path-to-license-file  The path to the xml license file
+    ***NOTE*** One of these arguments must be used !!!
 
     Example usage:
-    Install Apama license via c8y tenant option by input license key in command line
-        c8y oee \install_license --license ABCxyz-key-welcome-to-OEE
+      Install Apama license via c8y tenant option by input license key in command line
+          c8y oee \install_license --license ABCxyz-key-welcome-to-OEE
 
-    Install Apama license via c8y tenant option by reading xml license file:
-        c8y oee \install_license --filePath C:\SoftwareAG\Workspace\Download\InternalKeys_IBO_Suite-v10.11_exp-2023-10-31\Apama\Apama for Cumulocity IoT v10.4
-    **Note** Only 1 xml license file should be available in the commands directory (same directory with the install_license script)
+      Install Apama license via c8y tenant option by reading xml license file in any directory:
+          c8y oee \install_license --filePath "C:/path/to/your/license/file/license_file.xml"
+
+      Install Apama license via c8y tenant option by reading xml license file in c8y-oee/commands/license:
+          c8y oee \install_license --filePath .
+          -> user is provided a list of files to choose
+
+          c8y oee \install_license --filePath ./license/license_file.xml
+          -> The referred file is used
 
 ----------------------------------------------------------------------------------------------------------
 EOF
