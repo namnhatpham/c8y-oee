@@ -11,18 +11,18 @@ HELP MESSAGE:
     ***NOTE*** One of these arguments must be used !!!
 
     Example usage:
-      Install Apama license via c8y tenant option by input license key in command line
-          c8y oee \install_license --license ABCxyz-key-welcome-to-OEE
+      Install Apama license via c8y tenant option by input license string in command line
+          c8y oee \install_license --license 'ABCxyz-key-welcome-to-OEE'
+      **Note** :
+        1. The license string must be covered by single quote, i.e '<license-string>'.
+        2. Any new line character must be removed to let terminal recognize the license string as a single string.
 
       Install Apama license via c8y tenant option by reading xml license file in any directory:
           c8y oee \install_license --filePath "C:/path/to/your/license/file/license_file.xml"
 
-      Install Apama license via c8y tenant option by reading xml license file in c8y-oee/commands/license:
-          c8y oee \install_license --filePath .
-          -> user is provided a list of files to choose
-
-          c8y oee \install_license --filePath ./license/license_file.xml
-          -> The referred file is used
+      Install Apama license via c8y tenant option by reading xml license file in c8y-oee/licenses:
+          c8y oee \install_license
+          -> user is provided a list of files to choose.
 
 ----------------------------------------------------------------------------------------------------------
 EOF
@@ -53,7 +53,7 @@ while [ $# -gt 0 ]; do
         exit 1
       fi
       ;;
-    -p|-path|--path)
+    -f|-filePath|--filePath)
       if [ $# -gt 1 ]; then
         FILEPATH=$2
         shift
@@ -91,8 +91,6 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
         if [[ -n $file ]]; then
           license_filepath="$licenses_directory/$file"
           license_filename=$file
-          echo "Path: $license_filepath"
-          echo "name: $license_filename"
           break
         fi
 
