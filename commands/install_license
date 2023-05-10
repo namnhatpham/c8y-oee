@@ -85,21 +85,18 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
     if [ ${#xml_files[@]} -eq 0 ]; then
       echo "No XML files found in the directory"
     else
-      echo "Please choose an XML license file to read:"
-      select file in "${xml_files[@]}"; do
-        # Check if a file was selected
-        if [[ -n $file ]]; then
-          license_filepath="$licenses_directory/$file"
-          license_filename=$file
-          break
-        fi
-
-        # Check for the Escape key
-        read -s -n 1 key
-        if [[ $key = $'\e' ]]; then
-          echo "Selection cancelled."
-          break
-        fi
+      echo "Please choose an XML license file to read:" >&2
+      while true; do
+        select file in "${xml_files[@]}" "Exit"; do
+          case $file in
+            "") echo "Invalid option. Please try again.";;
+            "Exit") exit;;
+            *)
+              license_filepath="$licenses_directory/$file"
+              license_filename=$file
+              break 2;;
+          esac
+        done
       done
     fi
 
@@ -137,7 +134,8 @@ if [[ ${#missing_args[@]} -gt 0 ]]; then
     message+=", ${missing_args[$i]}"
   done
   echo "$message" >&2
-  echo "License variable not set. Use -l|--license to set the license or --filePath to point to the license xml file." >&2
+  echo "Error: License string does not exist." >&2
+  echo "Please set the license variable using the -l or --license option, followed by the license key, or use the --filePath option to specify the path to the license XML file. For more information, please refer to the documentation." >&2
   help
   exit 1
 fi
