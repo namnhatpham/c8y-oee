@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/feat/extensions-manager/tools/schema/extensionCommands.json
+---
+group:
+  name: license
+  description: OEE license management
+commands:
+  - name: install
+    description: Install APAMA license
+    descriptionLong: Install a new APAMA license. The APAMA license is an XML file provided by Software AG.
+    method: PUT
+    path: tenant/options/apama/custom.license
+    body:
+      - name: file
+        type: fileContentsAsString
+        description: License file
+    bodyTemplates:
+      - type: jsonnet
+        template: | 
+          // Loop over fromArray (of strings), running std.stdReplace()
+          local strReplaceMany(str, fromArray, to) = std.foldl( 
+            function(retStr, from) std.strReplace(retStr, from, to), 
+            fromArray, 
+            str 
+          ); 
+          
+          { 
+            file:: null, 
+            value: std.stripChars( 
+              std.escapeStringJson( 
+                strReplaceMany($.file, ['\r', '\n'], '') 
+              ), 
+              '\"' 
+            ), 
+          }
