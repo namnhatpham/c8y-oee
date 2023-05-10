@@ -24,9 +24,10 @@ This extension relies on an up-coming go-c8y-cli [extensions](https://github.com
 **Note:** Building `go-c8y-cli` requires go version ≥ 1.20.
 
 ### Shell (bash/zsh/fish)
+Checkout the [go-c8y-cli extension docs](https://feat-extensions-manager--goc8ycli.netlify.app/docs/tutorials/extensions/creating-an-extension/) for the latest version update
 
 ```sh
-go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@64dd3bd70b6b1114dca8dc15041466ab83bc5410
+go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@d6ebaddfd3182f657bf9ad37282f5ad1c25255b3
 
 # Add the go bin folder to your path variable (ideally add this to your shell profile (.zshrc for zsh or .bashrc for bash)
 export PATH="$(go env GOPATH)/bin:$PATH"
@@ -35,7 +36,7 @@ export PATH="$(go env GOPATH)/bin:$PATH"
 ### PowerShell
 
 ```powershell
-go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@64dd3bd70b6b1114dca8dc15041466ab83bc5410
+go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@d6ebaddfd3182f657bf9ad37282f5ad1c25255b3
 
 # Add the go bin folder to the path variable and set a powershell alias to it
 if ($IsWindows) {
