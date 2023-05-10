@@ -160,9 +160,8 @@ if [[ -z $response ]]; then
   exit 1
 fi
 
-echo "Server response: $response" >&2
-
 if [[ $response == *"serverError"* || -z $response ]]; then
+  echo "$response"
   echo "Error: Failed to add apama license to tenant option." >&2
   exit 1
 fi
