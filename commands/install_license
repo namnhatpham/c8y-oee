@@ -154,7 +154,13 @@ fi
 echo "License is being installed"
 
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED")
-echo "Server response: $response"
+
+if [[ -z $response ]]; then
+  echo "Error: Failed to send request. No response from server." >&2
+  exit 1
+fi
+
+echo "Server response: $response" >&2
 
 if [[ $response == *"serverError"* || -z $response ]]; then
   echo "Error: Failed to add apama license to tenant option." >&2
