@@ -81,13 +81,12 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
   if [[ $FILEPATH == "."* ]]; then
     # Check script current directory and move to license directory inside it.
     script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-    cd "$script_dir\license"
+    cd "$script_dir/license"
     error_check
 
     # input file path is ./example.xml
-    if [[ $FILEPATH == "./"* ]]; then
-      # Extract filename after "./"
-      license_filename=${FILEPATH#./}
+    if [[ $FILEPATH != "." ]]; then
+      license_filename=$(basename "$FILEPATH")
       license_filepath="$script_dir/license/$license_filename"
 
     # input file path is .
@@ -106,15 +105,12 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
 
   else
     license_filepath=$FILEPATH
-    echo "Licesen file path: $license_filepath"
     # Extract filename from full path
     license_filename=$(basename "$license_filepath")
-    echo "License file name: $license_filename"
     # Extract directory path from full path
     filepath_without_filename=$(dirname "$license_filepath")
     # Change to directory containing license file
     cd "$filepath_without_filename"
-    echo "FILEPATH without filename: $filepath_without_filename"
     error_check
 
   fi
@@ -151,7 +147,7 @@ echo "URL          :  $C8Y_HOST"
 echo "Tenant ID    :  $C8Y_TENANT"
 echo "User         :  $C8Y_USER"
 echo "License file :  $license_filepath"
-
+exit 0
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
 if [[ $response == *"serverError"* ]]; then
   echo "$response"
