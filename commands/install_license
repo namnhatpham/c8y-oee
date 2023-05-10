@@ -134,7 +134,6 @@ if [[ ${#missing_args[@]} -gt 0 ]]; then
     message+=", ${missing_args[$i]}"
   done
   echo "$message" >&2
-  echo "Error: License string does not exist." >&2
   echo "Please set the license variable using the -l or --license option, followed by the license key, or use the --filePath option to specify the path to the license XML file. For more information, please refer to the documentation." >&2
   help
   exit 1
