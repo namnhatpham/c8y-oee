@@ -146,8 +146,10 @@ LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 echo "URL          :  $C8Y_HOST"
 echo "Tenant ID    :  $C8Y_TENANT"
 echo "User         :  $C8Y_USER"
-echo "License file :  $license_filepath"
-exit 0
+if [ -n "$license_filepath" ]; then
+  echo "License file :  $license_filepath"
+fi
+
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
 if [[ $response == *"serverError"* ]]; then
   echo "$response"
