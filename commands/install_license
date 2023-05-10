@@ -150,6 +150,8 @@ if [ -n "$license_filepath" ]; then
   echo "License file :  $license_filepath"
 fi
 
+echo "License is being installed"
+
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
 if [[ $response == *"serverError"* || -z $response ]]; then
   echo "$response"
