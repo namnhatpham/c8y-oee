@@ -9,6 +9,9 @@ commands:
     descriptionLong: Install a new APAMA license. The APAMA license is an XML file provided by Software AG.
     method: PUT
     path: tenant/options/apama/custom.license
+    exampleList:
+      - description: install license for OEE APAMA
+        command: c8y oee license install --file "C:\path\to\license\file\ApamaServerPAQLicense101_Example.xml"
     body:
       - name: file
         type: fileContentsAsString
