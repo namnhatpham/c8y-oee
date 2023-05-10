@@ -81,9 +81,9 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
     licenses_directory=$(pwd)
 
     # List all xml files in directory and prompt user to choose one
-    xml_files=($(ls *.xml))
+    xml_files=($(ls *.xml 2>/dev/null))
     if [ ${#xml_files[@]} -eq 0 ]; then
-      echo "No XML files found in the directory"
+      echo "No XML files found in the c8y-oee/licenses directory"
     else
       echo "Please choose an XML license file to read:" >&2
       while true; do
