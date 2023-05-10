@@ -151,7 +151,7 @@ if [ -n "$license_filepath" ]; then
 fi
 
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED" 2>&1)
-if [[ $response == *"serverError"* ]]; then
+if [[ $response == *"serverError"* || -z $response ]]; then
   echo "$response"
   echo "Error: Failed to add apama license to tenant option." >&2
   exit 1
