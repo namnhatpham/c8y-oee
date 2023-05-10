@@ -78,6 +78,7 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
     script_dir=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
     cd "$script_dir/../licenses"
     error_check
+    licenses_directory=$(pwd)
 
     # List all xml files in directory and prompt user to choose one
     xml_files=($(ls *.xml))
@@ -88,8 +89,10 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
       select file in "${xml_files[@]}"; do
         # Check if a file was selected
         if [[ -n $file ]]; then
-          license_filepath="$script_dir/../licenses/$file"
+          license_filepath="$licenses_directory/$file"
           license_filename=$file
+          echo "Path: $license_filepath"
+          echo "name: $license_filename"
           break
         fi
 
@@ -102,24 +105,25 @@ if [[ -z $LICENSE_UNESCAPED ]]; then
       done
     fi
 
-    if [[ -z $license_filepath ]]; then
-    # Add filePath argument to missing message
-    missing_args+=(filePath)
-    fi
+  else
+    license_filepath=$FILEPATH
+    # Extract filename from full path
+    license_filename=$(basename "$license_filepath")
+    # Extract directory path from full path
+    filepath_without_filename=$(dirname "$license_filepath")
+    # Change to directory containing license file
+    cd "$filepath_without_filename"
+    error_check
   fi
 
-  license_filepath=$FILEPATH
-  # Extract filename from full path
-  license_filename=$(basename "$license_filepath")
-  # Extract directory path from full path
-  filepath_without_filename=$(dirname "$license_filepath")
-  # Change to directory containing license file
-  cd "$filepath_without_filename"
-  error_check
-
-  # Read license xml file
-  LICENSE_UNESCAPED=$(cat "$license_filename")
-  error_check
+  if [[ -z $license_filepath ]]; then
+    # Add filePath argument to missing message
+    missing_args+=(filePath)
+  else
+    # Read license xml file
+    LICENSE_UNESCAPED=$(cat "$license_filename")
+    error_check
+  fi
 
 fi
 
@@ -153,7 +157,7 @@ if [ -n "$license_filepath" ]; then
 fi
 
 echo "License is being installed"
-
+exit 0
 response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED")
 echo "Server response: $response"
 
