@@ -36,11 +36,7 @@ export PATH="$(go env GOPATH)/bin:$PATH"
 ### PowerShell
 
 ```powershell
-<<<<<<< HEAD
 go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@d6ebaddfd3182f657bf9ad37282f5ad1c25255b3
-=======
-go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@e25a3b0ba9b974346b1bf98c70300fb464a8add4
->>>>>>> main
 
 # Add the go bin folder to the path variable and set a powershell alias to it
 if ($IsWindows) {
