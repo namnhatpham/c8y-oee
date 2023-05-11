@@ -29,9 +29,7 @@ commands:
           { 
             file:: null, 
             value: std.stripChars( 
-              std.escapeStringJson( 
-                strReplaceMany($.file, ['\\', '\r', '\n'], '') 
-              ), 
+                strReplaceMany($.file, ['\r', '\n'], '') , 
               '\"' 
             ), 
           }
