@@ -36,7 +36,11 @@ export PATH="$(go env GOPATH)/bin:$PATH"
 ### PowerShell
 
 ```powershell
+<<<<<<< HEAD
 go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@d6ebaddfd3182f657bf9ad37282f5ad1c25255b3
+=======
+go install github.com/reubenmiller/go-c8y-cli/v2/cmd/c8y@e25a3b0ba9b974346b1bf98c70300fb464a8add4
+>>>>>>> main
 
 # Add the go bin folder to the path variable and set a powershell alias to it
 if ($IsWindows) {
@@ -61,7 +65,7 @@ The version suffix should be the first part of the git commit id from the `go in
 ```sh
 | branch         | version                                    |
 |----------------|--------------------------------------------|
-| (unknown)      | v2.22.5-0.20230423212102-93fb6a64efdc      |
+| (unknown)      | v2.22.5-0.20230504202920-e25a3b0ba9b9      |
 ```
 
 ## Install

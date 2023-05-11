@@ -4,11 +4,43 @@ group:
   name: devices
   description: OEE devices
 
+x-template: &custom-device
+  completion:
+    type: external
+    command:
+      - c8y
+      - devices
+      - list
+      - --query
+      - not(has(@com_adamos_oee_datamodel_MachineOEEConfiguration))
+      - --select=name
+  lookup:
+    type: external
+    command:
+      - c8y
+      - devices
+      - list
+      - --name
+      - "%s"
+      - --query
+      - not(has(@com_adamos_oee_datamodel_MachineOEEConfiguration))
+      - --select=id
+
 commands:
   - name: list
     description: Get device collection
     method: GET
     path: inventory/managedObjects
+    exampleList:
+      - description: list all devices
+        command: c8y oee devices list
+      - description: list only simulator devices type=c8y_EventBasedSimulator
+        command: c8y oee devices list --type c8y_EventBasedSimulator --includeAll
+      - description: list simulator device that has name "Normal 1"
+        command:  c8y oee devices list --name "Normal 1" --includeAll
+      - description: list simulator devices that have "Normal" prefix in name
+        command: c8y oee devices list --name Normal* --includeAll
+
     queryParameters:
       - name: query
         property: q
@@ -26,7 +58,32 @@ commands:
             description: Filter by type
             format: (type eq '%s')
 
+          - name: name
+            type: string
+            description: Filter by name
+            format: (name eq '%s')
+
           - name: orderBy
             type: string
             default: name
             description: Order by. e.g. _id asc or name asc or creationTime.date desc
+
+  - name: get
+    description: Get device
+    method: GET
+    path: inventory/managedObjects/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Device
+        <<: *custom-device
+
+  - name: delete
+    description: Delete device
+    method: DELETE
+    path: inventory/managedObjects/{id}
+    pathParameters:
+      - name: id
+        type: string
+        description: Device
+        <<: *custom-device
