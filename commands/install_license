@@ -12,16 +12,16 @@ HELP MESSAGE:
 
     Example usage:
       Install Apama license via c8y tenant option by input license string in command line
-          c8y oee \install_license --license 'ABCxyz-key-welcome-to-OEE'
+          c8y oee install_license --license 'ABCxyz-key-welcome-to-OEE'
       **Note** :
         1. The license string must be covered by single quote, i.e '<license-string>'.
         2. Any new line character must be removed to let terminal recognize the license string as a single string.
 
       Install Apama license via c8y tenant option by reading xml license file in any directory:
-          c8y oee \install_license --filePath "C:/path/to/your/license/file/license_file.xml"
+          c8y oee install_license --filePath "C:/path/to/your/license/file/license_file.xml"
 
       Install Apama license via c8y tenant option by reading xml license file in c8y-oee/licenses:
-          c8y oee \install_license
+          c8y oee install_license
           -> user is provided a list of files to choose.
 
 ----------------------------------------------------------------------------------------------------------

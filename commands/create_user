@@ -15,7 +15,7 @@ HELP MESSAGE:
 
     Example usage:
     Create a user with global roles "OEE Admin" and "business":
-        c8y oee \create_user --username abctest --password Password.123 --email dummy-oeeadmin@softwareag.com --role admin
+        c8y oee create_user --username abctest --password Password.123 --email dummy-oeeadmin@softwareag.com --role admin
 ----------------------------------------------------------------------------------------------------------
 
 EOF
