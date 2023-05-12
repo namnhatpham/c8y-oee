@@ -4,7 +4,7 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee \\$(basename "$0") [--license <license-string>] [--filePath <path-to-license-file>]
+    Usage: c8y oee $(basename "$0") [--license <license-string>] [--filePath <path-to-license-file>]
     Arguments:
       -l, --license   license-string        The license string
       -f, --filePath  path-to-license-file  The path to the xml license file

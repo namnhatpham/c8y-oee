@@ -5,7 +5,7 @@ help() {
 
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
-    Usage: c8y oee \\$(basename "$0") --username <username> --password <password> --email <email> --role <admin|reader|access>
+    Usage: c8y oee $(basename "$0") --username <username> --password <password> --email <email> --role <admin|reader|access>
     Arguments:
       -u, --username  USERNAME  The username for the new user (required)
       -p, --password  PASSWORD  The password for the new user ( Password must have at least 8 characters and no more than 32 and must contain only Latin characters) (required)
