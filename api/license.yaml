@@ -11,7 +11,7 @@ commands:
     path: tenant/options/apama/credentials.license
     exampleList:
       - description: install license for OEE APAMA
-        command: c8y oee license install --file "C:\path\to\license\file\ApamaServerPAQLicense101_Example.xml"
+        command: c8y oee license install --file "C:\path\to\license\file\CumulocityIOTOOELicense1010.xml"
     body:
       - name: file
         type: fileContentsAsString
