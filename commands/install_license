@@ -62,6 +62,11 @@ while [ $# -gt 0 ]; do
         exit 1
       fi
       ;;
+    --*)
+      echo "Invalid option: $1"
+      help
+      exit 0
+      ;;
     *)
       REST_ARGS+=("$1")
       ;;
@@ -153,13 +158,19 @@ fi
 
 echo "License is being installed"
 
-response=$(c8y tenantoptions update --category apama --key credentials.license --value "$LICENSE_ESCAPED")
+# Encode the string to UTF-8
+encoded_string=$(echo "$LICENSE_ESCAPED" | iconv -t UTF-8)
 
+# Send request to cumulocity
+response=$(c8y tenantoptions update --category apama --key credentials.license --value "$encoded_string")
+
+# Check fault if failed to send request
 if [[ -z $response ]]; then
   echo "Error: Failed to send request. No response from server." >&2
   exit 1
 fi
 
+# Check fault if request receives error message from server
 if [[ $response == *"serverError"* || -z $response ]]; then
   echo "$response"
   echo "Error: Failed to add apama license to tenant option." >&2
@@ -167,3 +178,4 @@ if [[ $response == *"serverError"* || -z $response ]]; then
 fi
 
 echo "License is installed successfully"
+exit 0
