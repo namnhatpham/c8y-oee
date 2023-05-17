@@ -168,7 +168,7 @@ if [ -z "$c8y_User" ]; then
     echo "$response" >&2
   fi
 
-  output=$(c8y users getUserByName --name "$username" 2>&1)
+  output=$(c8y users getUserByName --name "$username" "$@" 2>&1)
   if [[ $output == *"serverError"* ]]; then
     echo "Error: Created $username user with permission $role failed." >&2
     exit 1
