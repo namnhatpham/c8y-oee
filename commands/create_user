@@ -105,6 +105,7 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+set -- "${REST_ARGS[@]}"
 
 echo "URL       :  $C8Y_HOST"
 echo "Tenant ID :  $C8Y_TENANT"
@@ -138,8 +139,6 @@ if [[ ${#missing_args[@]} -gt 0 ]]; then
   exit 1
 fi
 
-set -- "${REST_ARGS[@]}"
-
 c8y_User=$(c8y users list --includeAll --username "$username" -o csv --select "id" -n)
 
 if [ -z "$c8y_User" ]; then
@@ -148,20 +147,20 @@ if [ -z "$c8y_User" ]; then
   if [ "$role" == "admin" ]; then
     user_group_list=("OEE Admin" "business")
     check_user_groups_availability "${user_group_list[@]}"
-    response=$(c8y users create -f -n --userName "$username" --password "$password" --email "$email" | \
-                c8y userreferences addUserToGroup -f --group "business"   | \
-                c8y userreferences addUserToGroup -f --group "OEE Admin" 2>&1)
+    response=$(c8y users create -f -n --userName "$username" --password "$password" --email "$email" "$@" | \
+                c8y userreferences addUserToGroup -f --group "business" "$@"   | \
+                c8y userreferences addUserToGroup -f --group "OEE Admin" "$@" 2>&1)
   elif [ "$role" == "reader" ]; then
     user_group_list=("OEE Reader" "business")
     check_user_groups_availability "${user_group_list[@]}"
-    response=$(c8y users create -f -n --userName "$username" --password "$password" --email "$email" | \
-                c8y userreferences addUserToGroup -f --group "business"   | \
-                c8y userreferences addUserToGroup -f --group "OEE Reader" 2>&1)
+    response=$(c8y users create -f -n --userName "$username" --password "$password" --email "$email" "$@" | \
+                c8y userreferences addUserToGroup -f --group "business" "$@"  | \
+                c8y userreferences addUserToGroup -f --group "OEE Reader" "$@" 2>&1)
   elif [ "$role" == "business" ]; then
     user_group_list=("business")
     check_user_groups_availability "${user_group_list[@]}"
-    response=$(c8y users create -f -n --userName "$username" --password "$password" --email "$email" | \
-                c8y userreferences addUserToGroup -f --group "business" 2>&1)
+    response=$(c8y users create -f -n --userName "$username" --password "$password" --email "$email" "$@" | \
+                c8y userreferences addUserToGroup -f --group "business" "$@" 2>&1)
   fi
 
   # Check response if there is error

@@ -68,6 +68,7 @@ while [ $# -gt 0 ]; do
   esac
   shift
 done
+set -- "${REST_ARGS[@]}"
 
 # Check if license string was input in command line
 missing_args=()
@@ -139,8 +140,6 @@ if [[ ${#missing_args[@]} -gt 0 ]]; then
   exit 1
 fi
 
-set -- "${REST_ARGS[@]}"
-
 # Remove new line and return characters from license content
 LICENSE_ESCAPED=$(echo "$LICENSE_UNESCAPED" | tr -d '\r\n')
 
@@ -157,7 +156,7 @@ echo "License is being installed"
 encoded_string=$(echo "$LICENSE_ESCAPED" | iconv -t UTF-8)
 
 # Send request to cumulocity
-response=$(c8y tenantoptions update --category apama --key credentials.license --value "$encoded_string")
+response=$(c8y tenantoptions update --category apama --key credentials.license --value "$encoded_string" "$@")
 
 # Check fault if failed to send request
 if [[ -z $response ]]; then
