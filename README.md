@@ -5,6 +5,7 @@
 go-c8y-cli extension to provide commands for the OEE app.
 
 Checkout the [go-c8y-cli extension docs](https://feat-extensions-manager--goc8ycli.netlify.app/docs/tutorials/extensions/creating-an-extension/) for detailed instruction about using go-c8y-cli extension.
+
 Checkout the [Official OEE API Documentation](https://cumulocity.com/api/oee) for more details.
 
 ## What is included?
