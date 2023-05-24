@@ -34,3 +34,16 @@ c8y extension install reubenmiller/c8y-oee
 # List the available commands
 c8y oee
 ```
+:rotating_light: Note :rotating_light: In order to use all the commands well in Powershell, the version of Powershell must be at least 7.3 to avoid unexpected issue.
+
+The version of Powershell can be check with this command
+
+```sh
+$PSVersionTable.PSVersion
+```
+
+Example output:
+
+| Major | Minor | Patch | PreReleaseLabel  | BuildLabel         |
+|-------| ----- |-------|------------------|--------------------|
+| 7     |    3  | 4     |   |   |
