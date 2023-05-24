@@ -40,9 +40,7 @@ commands:
             contents:: null, 
             // Reference .contents to get the current flag value (either set via --flag or --string) 
             value: std.stripChars( 
-                    std.escapeStringJson( 
                       strReplaceMany($.contents, ['\r', '\n'], '') 
-                    )
                     , '\"' 
                   ), 
           }
