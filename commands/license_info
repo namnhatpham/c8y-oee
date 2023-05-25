@@ -5,7 +5,7 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--filePath <directory-to-store-csv-file>] [--select <keys-list>]
+    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--filePath <directory-to-store-csv-file>] [--select <keys-list>] [--help]
 
     Arguments:
       -o, --output        print-format      The printing format for data (json, table, csv file w/o header) (default: table)
