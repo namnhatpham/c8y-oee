@@ -5,15 +5,15 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee $(basename "$0") [--view <json|table>]
+    Usage: c8y oee $(basename "$0") [--output <json|table>]
 
     Arguments:
-      -v, --view      print-format      The printing format for data (default: table)
+      -o, --output      print-format      The printing format for data (default: table)
 
     Example usage:
 
     Check license info and print in json format:
-        c8y oee license_info -v json
+        c8y oee license_info -o json
 ----------------------------------------------------------------------------------------------------------
 
 EOF
@@ -30,7 +30,7 @@ while [ $# -gt 0 ]; do
       help
       exit 0
       ;;
-    -v|--view)
+    -o|--output)
       if [ $# -gt 1 ]; then
         if [ "$2" = "table" ]; then
           table_format=true
