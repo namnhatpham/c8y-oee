@@ -5,10 +5,10 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee $(basename "$0") [--output <json|table>]
+    Usage: c8y oee $(basename "$0") [--output <json|table|csv>]
 
     Arguments:
-      -o, --output      print-format      The printing format for data (default: table)
+      -o, --output      print-format      The printing format for data (json, table, csv file) (default: table)
 
     Example usage:
 
@@ -21,6 +21,7 @@ EOF
 # Set default printed format
 table_format=true
 json_format=false
+csv_format=false
 
 # Parse command-line options
 REST_ARGS=()
@@ -35,9 +36,15 @@ while [ $# -gt 0 ]; do
         if [ "$2" = "table" ]; then
           table_format=true
           json_format=false
+          csv_format=false
         elif [ "$2" = "json" ]; then
-          json_format=true
           table_format=false
+          json_format=true
+          csv_format=false
+        elif [ "$2" = "csv" ]; then
+          table_format=false
+          json_format=false
+          csv_format=true
         else
           echo "Invalid argument: $2" >&2
           help
@@ -82,8 +89,8 @@ response_json=$(echo "$input_json" | sed 's/}{/,/g')
 # Print the translated JSON
 if [[ "$json_format" == true ]]; then
   echo "$response_json"
-fi
-if [[ "$table_format" == true ]]; then
+
+else
   # Remove curly braces and quotes from the JSON string
   table_json="${response_json//\{/}"
   table_json="${table_json//\}/}"
@@ -115,27 +122,50 @@ if [[ "$table_format" == true ]]; then
       values+=("$value")
   done
 
+  if [[ "$table_format" == true ]]; then
+    # Find the length of the longest key
+    max_length=0
+    for key in "${keys[@]}"; do
+      length=${#key}
+      if (( length > max_length )); then
+        max_length=$length
+      fi
+    done
 
-  # Find the length of the longest key
-  max_length=0
-  for key in "${keys[@]}"; do
-    length=${#key}
-    if (( length > max_length )); then
-      max_length=$length
-    fi
-  done
+    # Calculate the width of the table cells
+    cell_width=$((max_length + 3))
 
-  # Calculate the width of the table cells
-  cell_width=$((max_length + 3))
+    # Print the table headers
+    printf "| %-$(($cell_width - 1))s | %s\n" "Key" "Value"
+    printf "| %-${cell_width}s|%s\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
 
-  # Print the table headers
-  printf "| %-$(($cell_width - 1))s | %s\n" "Key" "Value"
-  printf "| %-${cell_width}s|%s\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
+    # Print the keys and values in a table format
+    for ((i=0; i<${#keys[@]}; i++)); do
+      printf "| %-$(($cell_width - 1))s | %s\n" "${keys[$i]}" "${values[$i]}"
+    done
+  fi
 
-  # Print the keys and values in a table format
-  for ((i=0; i<${#keys[@]}; i++)); do
-    printf "| %-$(($cell_width - 1))s | %s\n" "${keys[$i]}" "${values[$i]}"
-  done
+  if [[ "$csv_format" == true ]]; then
+    # Get the current script directory
+    script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+    # Output file name
+    output_file="$script_dir/$(basename "$0").csv"
+
+    # Output CSV headers
+    echo "Key,Value" > "$output_file"
+
+    # Loop through the keys and values
+    for i in "${!keys[@]}"; do
+        key="${keys[$i]}"
+        value="${values[$i]}"
+
+        # Output key-value pair in CSV format
+        echo "$key,$value" >> "$output_file"
+    done
+
+    echo "CSV file created: $output_file"
+  fi
 fi
 
 exit 0
