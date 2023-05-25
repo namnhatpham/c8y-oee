@@ -197,14 +197,19 @@ else
     # Calculate the width of the table cells
     cell_width=$((max_length + 3))
 
+    # Calculate the padding for aligning headers in the middle
+    padding=$(( (cell_width - 3) / 2 ))
+
     # Print the table headers
-    printf "| %-$(($cell_width - 1))s | %s\n" "Key" "Value"
-    printf "| %-${cell_width}s|%s\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
+    printf "| %*s%-$(($cell_width - padding - 1))s | %*s%s%-$(($cell_width - padding - 5))s |\n" "$padding" "" "Key" "$padding" "" "Value"
+    printf "| %-${cell_width}s| %s |\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
 
     # Print the keys and values in a table format
     for ((i=0; i<${#keys[@]}; i++)); do
-      printf "| %-$(($cell_width - 1))s | %s\n" "${keys[$i]}" "${values[$i]}"
+      printf "| %-$(($cell_width - 1))s | %-${cell_width}s |\n" "${keys[$i]}" "${values[$i]} "
+      printf "| %-${cell_width}s| %s |\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
     done
+
   fi
 
   if [[ "$csv_format" == true ]]; then
