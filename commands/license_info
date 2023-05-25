@@ -5,15 +5,18 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee $(basename "$0") [--output <json|table|csv>]
+    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--filePath <directory-to-store-csv-file>]
 
     Arguments:
-      -o, --output      print-format      The printing format for data (json, table, csv file) (default: table)
+      -o, --output        print-format      The printing format for data (json, table, csv file w/o header) (default: table)
+      -f, --filePath      directory         directory to store csv file (default: current script directory c8y-oee/commands)
 
     Example usage:
 
     Check license info and print in json format:
         c8y oee license_info -o json
+    Check license info and print csv file:
+        c8y oee license_info -o csvheader -f "C:/path/to/storage/directory"
 ----------------------------------------------------------------------------------------------------------
 
 EOF
@@ -31,7 +34,8 @@ while [ $# -gt 0 ]; do
       help
       exit 0
       ;;
-    -o|--output)
+
+    -o|--output|-output)
       if [ $# -gt 1 ]; then
         if [ "$2" = "table" ]; then
           table_format=true
@@ -45,12 +49,17 @@ while [ $# -gt 0 ]; do
           table_format=false
           json_format=false
           csv_format=true
+          csv_header=false
+        elif [ "$2" = "csvheader" ]; then
+          table_format=false
+          json_format=false
+          csv_format=true
+          csv_header=true
         else
           echo "Invalid argument: $2" >&2
           help
           exit 1
         fi
-        email=$2
         shift
       else
         echo "Option $1 requires an argument." >&2
@@ -59,6 +68,15 @@ while [ $# -gt 0 ]; do
       fi
       ;;
 
+    -f|-filePath|--filePath)
+      if [ $# -gt 1 ]; then
+        filePath=$2
+      else
+        echo "Option $1 requires an argument." >&2
+        help
+        exit 1
+      fi
+      ;;
     *)
       REST_ARGS+=("$1")
       ;;
@@ -146,14 +164,23 @@ else
   fi
 
   if [[ "$csv_format" == true ]]; then
-    # Get the current script directory
-    script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+    # Check if file path is provided
+    if [[ -n "$filePath" ]]; then
+        # Use $filePath as script_dir
+        script_dir="$filePath"
+    else
+        # Get the current script directory
+        script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+    fi
 
     # Output file name
     output_file="$script_dir/$(basename "$0").csv"
 
-    # Output CSV headers
-    echo "Key,Value" > "$output_file"
+    if [[ "$csv_header" == true ]]; then
+      # Output CSV headers
+      echo "Key,Value" > "$output_file"
+    fi
 
     # Loop through the keys and values
     for i in "${!keys[@]}"; do
