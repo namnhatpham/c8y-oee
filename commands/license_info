@@ -60,10 +60,15 @@ while [ $# -gt 0 ]; do
 done
 set -- "${REST_ARGS[@]}"
 
-input_json=$(c8y oee license info)
+response=$(c8y oee license info)
+
+if [[ $response == *"serverError"* || -z "$response" ]]; then
+  echo "Error: Can not get license info." >&2
+  exit 1
+fi
 
 # Remove leading/trailing white spaces
-input_json=$(echo "$input_json" | tr -d '[:space:]')
+input_json=$(echo "$response" | tr -d '[:space:]')
 
 # Remove line breaks
 input_json=$(echo "$input_json" | tr -d '\n')
@@ -132,3 +137,5 @@ if [[ "$table_format" == true ]]; then
     printf "| %-$(($cell_width - 1))s | %s\n" "${keys[$i]}" "${values[$i]}"
   done
 fi
+
+exit 0
