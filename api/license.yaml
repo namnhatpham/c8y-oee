@@ -4,6 +4,17 @@ group:
   name: license
   description: OEE license management
 commands:
+  - name: info
+    description: Get license info
+    descriptionLong: Get license status and expiration date
+    method: GET
+    path: service/apama-oeeapp/mon/info/license
+    exampleList:
+      - description: Get license info
+        command: c8y oee license info
+    accept: 'application/json'
+    hidden: true
+    
   - name: install
     description: Install APAMA license
     descriptionLong: Install a new APAMA license. The APAMA license is an XML file provided by Software AG.
