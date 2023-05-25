@@ -11,6 +11,7 @@ HELP MESSAGE:
       -o, --output        print-format      The printing format for data (json, table, csv file w/o header) (default: table)
       -f, --filePath      directory         Directory to store csv file (default: current script directory c8y-oee/commands)
       -s, --select        keys-list         Data to show (default: show all data) (run the script to see the list of key to use)
+      -h, --help                            Show this help message
 
     Example usage:
 
