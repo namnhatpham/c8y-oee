@@ -5,18 +5,19 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--filePath <directory-to-store-csv-file>]
+    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--filePath <directory-to-store-csv-file>] [--select <data-to-show>]
 
     Arguments:
       -o, --output        print-format      The printing format for data (json, table, csv file w/o header) (default: table)
-      -f, --filePath      directory         directory to store csv file (default: current script directory c8y-oee/commands)
+      -f, --filePath      directory         Directory to store csv file (default: current script directory c8y-oee/commands)
+      -s, --select        fields            Data to show (default: show all data)
 
     Example usage:
 
     Check license info and print in json format:
         c8y oee license_info -o json
-    Check license info and print csv file:
-        c8y oee license_info -o csvheader -f "C:/path/to/storage/directory"
+    Check license info and print csv file with select data license status and license expiration:
+        c8y oee license_info -o csvheader -f "C:/path/to/storage/directory" -s 'licenseStatus, licenseExpiration'
 ----------------------------------------------------------------------------------------------------------
 
 EOF
@@ -70,13 +71,24 @@ while [ $# -gt 0 ]; do
 
     -f|-filePath|--filePath)
       if [ $# -gt 1 ]; then
-        filePath=$2
+        filePath="$2"
       else
         echo "Option $1 requires an argument." >&2
         help
         exit 1
       fi
       ;;
+
+    -s|--select|-select)
+      if [ $# -gt 1 ]; then
+        chosen_keys="$2"
+      else
+        echo "Option $1 requires an argument." >&2
+        help
+        exit 1
+      fi
+      ;;
+
     *)
       REST_ARGS+=("$1")
       ;;
@@ -139,6 +151,38 @@ else
 
       values+=("$value")
   done
+
+  if [[ -n "$chosen_keys" ]]; then
+      # Set the IFS (Internal Field Separator) to comma
+      IFS=', ' read -r -a chosen_keys_array <<< "$chosen_keys"
+
+      # Create temporary arrays to store filtered keys and values
+      temp_keys=()
+      temp_values=()
+
+      # Loop through the keys to check for availability
+      for i in "${!keys[@]}"; do
+          key="${keys[$i]}"
+          value="${values[$i]}"
+
+          # Check if the key is in the chosen_keys_array
+          if [[ " ${chosen_keys_array[*]} " == *" $key "* ]]; then
+              # Add the key and value to the temporary arrays
+              temp_keys+=("$key")
+              temp_values+=("$value")
+          fi
+      done
+
+      # Assign the temporary arrays back to the original keys and values arrays
+      keys=("${temp_keys[@]}")
+      values=("${temp_values[@]}")
+  fi
+
+
+  # Remove the empty elements from the arrays
+  keys=("${keys[@]}")
+  values=("${values[@]}")
+
 
   if [[ "$table_format" == true ]]; then
     # Find the length of the longest key
