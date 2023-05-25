@@ -14,7 +14,7 @@ commands:
         command: c8y oee license info
     accept: 'application/json'
     hidden: true
-    
+
   - name: install
     description: Install APAMA license
     descriptionLong: Install a new APAMA license. The APAMA license is an XML file provided by Software AG.
