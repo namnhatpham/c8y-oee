@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=https://raw.githubusercontent.com/reubenmiller/go-c8y-cli/feat/extensions-manager/tools/schema/extensionCommands.json
 ---
 group:
-  name: supportedSeries
+  name: supportedseries
   description: OEE supported series
 
 commands:
