@@ -14,6 +14,8 @@ commands:
         command: c8y oee license info
     accept: 'application/json'
     hidden: true
+    flagMapping:
+      pageSize: #If the value is empty, then the `pageSize` query parameter will be ignored
 
   - name: install
     description: Install APAMA license
