@@ -152,6 +152,8 @@ if [[ -n "$chosen_keys" ]]; then
     # Create temporary arrays to store filtered keys and values
     temp_keys=()
     temp_values=()
+    # Array to store unknown keys
+    unknown_keys=()
 
     # Loop through the keys to check for availability
     for i in "${!keys[@]}"; do
@@ -165,6 +167,21 @@ if [[ -n "$chosen_keys" ]]; then
             temp_values+=("$value")
         fi
     done
+
+    # Loop through the keys in chosen_keys_array
+    for chosen_key in "${chosen_keys_array[@]}"; do
+      # Check if the key is already in temp_keys array
+      if [[ ! " ${temp_keys[*]} " == *" $chosen_key "* ]]; then
+        # Add the unknown key to the unknown_keys array
+        unknown_keys+=("$chosen_key")
+      fi
+    done
+
+    # Output the list of unknown keys
+    if [ ${#unknown_keys[@]} -gt 0 ]; then
+      joined_unknown_keys=$(printf "%s, " "${unknown_keys[@]}")
+      echo "Unknown selected keys: ${joined_unknown_keys%, }"
+    fi
 
     # Assign the temporary arrays back to the original keys and values arrays
     keys=("${temp_keys[@]}")
