@@ -207,21 +207,9 @@ fi
 
 if [[ "$csv_format" == true ]]; then
 
-  # Check if file path is provided
-  if [[ -n "$filePath" ]]; then
-      # Use $filePath as script_dir
-      script_dir="$filePath"
-  else
-      # Get the current script directory
-      script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-  fi
-
-  # Output file name
-  output_file="$script_dir/$(basename "$0").csv"
-
   if [[ "$csv_header" == true ]]; then
     # Output CSV headers
-    echo "Key,Value" > "$output_file"
+    echo "Key,Value"
   fi
 
   # Loop through the keys and values
@@ -230,10 +218,9 @@ if [[ "$csv_format" == true ]]; then
       value="${values[$i]}"
 
       # Output key-value pair in CSV format
-      echo "$key,$value" >> "$output_file"
+      echo "$key,$value"
   done
 
-  echo "CSV file created: $output_file"
 fi
 
 # Print the translated JSON
