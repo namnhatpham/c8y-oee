@@ -107,142 +107,151 @@ fi
 
 # Remove leading/trailing white spaces
 input_json=$(echo "$response" | tr -d '[:space:]')
-
 # Remove line breaks
 input_json=$(echo "$input_json" | tr -d '\n')
-
 # Remove return
 input_json=$(echo "$input_json" | tr -d '\r')
-
 # Replace continuous opening and closing curly bracket with comma
 response_json=$(echo "$input_json" | sed 's/}{/,/g')
 
-# Print the translated JSON
-if [[ "$json_format" == true ]]; then
-  echo "$response_json"
+# Remove curly braces and quotes from the JSON string
+table_json="${response_json//\{/}"
+table_json="${table_json//\}/}"
+table_json="${table_json//\"/}"
 
-else
-  # Remove curly braces and quotes from the JSON string
-  table_json="${response_json//\{/}"
-  table_json="${table_json//\}/}"
-  table_json="${table_json//\"/}"
+# Split the string into an array using comma as the delimiter
+IFS="," read -r -a pairs <<< "$table_json"
 
-  # Split the string into an array using comma as the delimiter
-  IFS="," read -r -a pairs <<< "$table_json"
+# Initialize arrays for keys and values
+keys=()
+values=()
 
-  # Initialize arrays for keys and values
-  keys=()
-  values=()
+# Loop through the pairs and extract keys and values
+for pair in "${pairs[@]}"; do
+    IFS=":" read -r key value <<< "$pair"
+    keys+=("$key")
 
-  # Loop through the pairs and extract keys and values
-  for pair in "${pairs[@]}"; do
-      IFS=":" read -r key value <<< "$pair"
-      keys+=("$key")
-
-      if [[ "$key" == "licenseExpiration" ]]; then
-          # Check if the value has the format "YYYY.MM.DDHH:MM"
-          if [[ "$value" =~ ^[0-9]{4}\.[0-9]{2}\.[0-9]{2}[0-9]{2}:[0-9]{2}$ ]]; then
-              # Split the value into date and time components
-              date="${value:0:10}"
-              time="${value:10}"
-              # Modify the value to "YYYY.MM.DD-HH:MM"
-              value="$date-$time"
-          fi
-      fi
-
-      values+=("$value")
-  done
-
-  if [[ -n "$chosen_keys" ]]; then
-      # Set the IFS (Internal Field Separator) to comma
-      IFS=', ' read -r -a chosen_keys_array <<< "$chosen_keys"
-
-      # Create temporary arrays to store filtered keys and values
-      temp_keys=()
-      temp_values=()
-
-      # Loop through the keys to check for availability
-      for i in "${!keys[@]}"; do
-          key="${keys[$i]}"
-          value="${values[$i]}"
-
-          # Check if the key is in the chosen_keys_array
-          if [[ " ${chosen_keys_array[*]} " == *" $key "* ]]; then
-              # Add the key and value to the temporary arrays
-              temp_keys+=("$key")
-              temp_values+=("$value")
-          fi
-      done
-
-      # Assign the temporary arrays back to the original keys and values arrays
-      keys=("${temp_keys[@]}")
-      values=("${temp_values[@]}")
-  fi
-
-
-  # Remove the empty elements from the arrays
-  keys=("${keys[@]}")
-  values=("${values[@]}")
-
-
-  if [[ "$table_format" == true ]]; then
-    # Find the length of the longest key
-    max_length=0
-    for key in "${keys[@]}"; do
-      length=${#key}
-      if (( length > max_length )); then
-        max_length=$length
-      fi
-    done
-
-    # Calculate the width of the table cells
-    cell_width=$((max_length + 3))
-
-    # Calculate the padding for aligning headers in the middle
-    padding=$(( (cell_width - 3) / 2 ))
-
-    # Print the table headers
-    printf "| %*s%-$(($cell_width - padding - 1))s | %*s%s%-$(($cell_width - padding - 5))s |\n" "$padding" "" "Key" "$padding" "" "Value"
-    printf "| %-${cell_width}s| %s |\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
-
-    # Print the keys and values in a table format
-    for ((i=0; i<${#keys[@]}; i++)); do
-      printf "| %-$(($cell_width - 1))s | %-${cell_width}s |\n" "${keys[$i]}" "${values[$i]} "
-      printf "| %-${cell_width}s| %s |\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
-    done
-
-  fi
-
-  if [[ "$csv_format" == true ]]; then
-
-    # Check if file path is provided
-    if [[ -n "$filePath" ]]; then
-        # Use $filePath as script_dir
-        script_dir="$filePath"
-    else
-        # Get the current script directory
-        script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+    if [[ "$key" == "licenseExpiration" ]]; then
+        # Check if the value has the format "YYYY.MM.DDHH:MM"
+        if [[ "$value" =~ ^[0-9]{4}\.[0-9]{2}\.[0-9]{2}[0-9]{2}:[0-9]{2}$ ]]; then
+            # Split the value into date and time components
+            date="${value:0:10}"
+            time="${value:10}"
+            # Modify the value to "YYYY.MM.DD-HH:MM"
+            value="$date-$time"
+        fi
     fi
 
-    # Output file name
-    output_file="$script_dir/$(basename "$0").csv"
+    values+=("$value")
+done
 
-    if [[ "$csv_header" == true ]]; then
-      # Output CSV headers
-      echo "Key,Value" > "$output_file"
-    fi
+if [[ -n "$chosen_keys" ]]; then
+    # Set the IFS (Internal Field Separator) to comma
+    IFS=', ' read -r -a chosen_keys_array <<< "$chosen_keys"
 
-    # Loop through the keys and values
+    # Create temporary arrays to store filtered keys and values
+    temp_keys=()
+    temp_values=()
+
+    # Loop through the keys to check for availability
     for i in "${!keys[@]}"; do
         key="${keys[$i]}"
         value="${values[$i]}"
 
-        # Output key-value pair in CSV format
-        echo "$key,$value" >> "$output_file"
+        # Check if the key is in the chosen_keys_array
+        if [[ " ${chosen_keys_array[*]} " == *" $key "* ]]; then
+            # Add the key and value to the temporary arrays
+            temp_keys+=("$key")
+            temp_values+=("$value")
+        fi
     done
 
-    echo "CSV file created: $output_file"
+    # Assign the temporary arrays back to the original keys and values arrays
+    keys=("${temp_keys[@]}")
+    values=("${temp_values[@]}")
+fi
+
+
+# Remove the empty elements from the arrays
+keys=("${keys[@]}")
+values=("${values[@]}")
+
+
+if [[ "$table_format" == true ]]; then
+  # Find the length of the longest key
+  max_length=0
+  for key in "${keys[@]}"; do
+    length=${#key}
+    if (( length > max_length )); then
+      max_length=$length
+    fi
+  done
+
+  # Calculate the width of the table cells
+  cell_width=$((max_length + 3))
+
+  # Calculate the padding for aligning headers in the middle
+  padding=$(( (cell_width - 3) / 2 ))
+
+  # Print the table headers
+  printf "| %*s%-$(($cell_width - padding - 1))s | %*s%s%-$(($cell_width - padding - 5))s |\n" "$padding" "" "Key" "$padding" "" "Value"
+  printf "| %-${cell_width}s| %s |\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
+
+  # Print the keys and values in a table format
+  for ((i=0; i<${#keys[@]}; i++)); do
+    printf "| %-$(($cell_width - 1))s | %-${cell_width}s |\n" "${keys[$i]}" "${values[$i]} "
+    printf "| %-${cell_width}s| %s |\n" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')" "$(printf "%-${cell_width}s" "-" | tr ' ' '-')"
+  done
+
+fi
+
+if [[ "$csv_format" == true ]]; then
+
+  # Check if file path is provided
+  if [[ -n "$filePath" ]]; then
+      # Use $filePath as script_dir
+      script_dir="$filePath"
+  else
+      # Get the current script directory
+      script_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
   fi
+
+  # Output file name
+  output_file="$script_dir/$(basename "$0").csv"
+
+  if [[ "$csv_header" == true ]]; then
+    # Output CSV headers
+    echo "Key,Value" > "$output_file"
+  fi
+
+  # Loop through the keys and values
+  for i in "${!keys[@]}"; do
+      key="${keys[$i]}"
+      value="${values[$i]}"
+
+      # Output key-value pair in CSV format
+      echo "$key,$value" >> "$output_file"
+  done
+
+  echo "CSV file created: $output_file"
+fi
+
+# Print the translated JSON
+if [[ "$json_format" == true ]]; then
+  # Convert keys and values into JSON
+  json_string="{"
+  for ((i=0; i<${#keys[@]}; i++)); do
+      key="${keys[$i]}"
+      value="${values[$i]}"
+      json_string+="\"$key\":\"$value\""
+
+      if ((i < ${#temp_keys[@]}-1)); then
+          json_string+=","
+      fi
+  done
+  json_string+="}"
+
+  echo "$json_string"
 fi
 
 exit 0
