@@ -14,8 +14,8 @@ HELP MESSAGE:
 
     Example usage:
 
-    Check license info and print in json format:
-        c8y oee license_info -o json
+    Check license info with selected licenseStatus, licenseExpiration data and output in json format:
+        c8y oee license_info -o json -s 'licenseStatus, licenseExpiration'
 ----------------------------------------------------------------------------------------------------------
 
 EOF
