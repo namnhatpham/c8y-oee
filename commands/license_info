@@ -24,6 +24,7 @@ EOF
 table_format=true
 json_format=false
 csv_format=false
+csv_header=false
 
 # Parse command-line options
 REST_ARGS=()
@@ -38,22 +39,20 @@ while [ $# -gt 0 ]; do
       if [ $# -gt 1 ]; then
         if [ "$2" = "table" ]; then
           table_format=true
-          json_format=false
-          csv_format=false
+
         elif [ "$2" = "json" ]; then
           table_format=false
           json_format=true
-          csv_format=false
+
         elif [ "$2" = "csv" ]; then
           table_format=false
-          json_format=false
           csv_format=true
-          csv_header=false
+
         elif [ "$2" = "csvheader" ]; then
           table_format=false
-          json_format=false
           csv_format=true
           csv_header=true
+
         else
           echo "Invalid argument: $2" >&2
           help
