@@ -5,11 +5,10 @@ help() {
 ----------------------------------------------------------------------------------------------------------
 HELP MESSAGE:
 
-    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--filePath <directory-to-store-csv-file>] [--select <keys-list>] [--help]
+    Usage: c8y oee $(basename "$0") [--output <json|table|csv|csvheader>] [--select <keys-list>] [--help]
 
     Arguments:
-      -o, --output        print-format      The printing format for data (json, table, csv file w/o header) (default: table)
-      -f, --filePath      directory         Directory to store csv file (default: current script directory c8y-oee/commands)
+      -o, --output        print-format      The printing format for data (json, table, csv w/o header) (default: table)
       -s, --select        keys-list         Data to show (default: show all data) (run the script to see the list of key to use)
       -h, --help                            Show this help message
 
@@ -17,8 +16,6 @@ HELP MESSAGE:
 
     Check license info and print in json format:
         c8y oee license_info -o json
-    Check license info and print csv file with select data license status and license expiration:
-        c8y oee license_info -o csvheader -f "C:/path/to/storage/directory" -s 'licenseStatus, licenseExpiration'
 ----------------------------------------------------------------------------------------------------------
 
 EOF
@@ -63,16 +60,6 @@ while [ $# -gt 0 ]; do
           exit 1
         fi
         shift
-      else
-        echo "Option $1 requires an argument." >&2
-        help
-        exit 1
-      fi
-      ;;
-
-    -f|-filePath|--filePath)
-      if [ $# -gt 1 ]; then
-        filePath="$2"
       else
         echo "Option $1 requires an argument." >&2
         help
